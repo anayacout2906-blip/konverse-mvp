@@ -1,96 +1,117 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(KonverseApp());
+void main() {
+  runApp(const KonverseApp());
+}
 
 class KonverseApp extends StatelessWidget {
+  const KonverseApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Konverse',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6C5CE7)),
         useMaterial3: true,
       ),
-      home: KonverseHome(),
+      home: const HomeScreen(),
     );
   }
 }
 
-class KonverseHome extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
-  State<KonverseHome> createState() => _KonverseHomeState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _KonverseHomeState extends State<KonverseHome> {
-  final List<Map<String,String>> messages = [];
-  final controller = TextEditingController();
+class _HomeScreenState extends State<HomeScreen> {
+  final List<Map<String, String>> phrases = [
+    {"en": "How are you doing today?", "pt": "Como você está hoje?"},
+    {"en": "Could you help me with this?", "pt": "Você poderia me ajudar com isso?"},
+    {"en": "I was thinking about our conversation", "pt": "Eu estava pensando sobre nossa conversa"},
+    {"en": "Let's practice English together!", "pt": "Vamos praticar inglês juntos!"},
+    {"en": "What do you think about this idea?", "pt": "O que você acha dessa ideia?"},
+  ];
 
-  void sendMessage() {
-    if(controller.text.trim().isEmpty) return;
+  int currentIndex = 0;
+
+  void nextPhrase() {
     setState(() {
-      messages.add({"text": controller.text, "user": "Você"});
-      // Simula resposta
-      messages.add({"text": "Konverse responde: ${controller.text} 😊", "user": "Bot"});
+      currentIndex = (currentIndex + 1) % phrases.length;
     });
-    controller.clear();
   }
 
   @override
   Widget build(BuildContext context) {
+    final current = phrases[currentIndex];
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FF),
       appBar: AppBar(
-        title: Text("Konverse 💬", style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.deepPurple.shade100,
+        title: const Text("Konverse", style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: const Color(0xFF6C5CE7),
+        foregroundColor: Colors.white,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: messages.isEmpty 
-              ? Center(child: Text("Diga oi para começar! 👋", style: TextStyle(fontSize: 18)))
-              : ListView.builder(
-                itemCount: messages.length,
-                padding: EdgeInsets.all(12),
-                itemBuilder: (c,i) {
-                  final isMe = messages[i]["user"] == "Você";
-                  return Align(
-                    alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                    child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 4),
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: isMe ? Colors.deepPurple : Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(messages[i]["text"]!, 
-                        style: TextStyle(color: isMe ? Colors.white : Colors.black)),
-                    ),
-                  );
-                },
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(28),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))
+                ],
               ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Expanded(child: TextField(
-                  controller: controller,
-                  decoration: InputDecoration(
-                    hintText: "Digite sua mensagem...",
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12)
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(color: const Color(0xFF6C5CE7).withOpacity(0.1), shape: BoxShape.circle),
+                    child: const Icon(Icons.chat_bubble_rounded, size: 32, color: Color(0xFF6C5CE7)),
                   ),
-                  onSubmitted: (_) => sendMessage(),
-                )),
-                SizedBox(width: 8),
-                CircleAvatar(
-                  backgroundColor: Colors.deepPurple,
-                  child: IconButton(icon: Icon(Icons.send, color: Colors.white), onPressed: sendMessage),
-                )
-              ],
+                  const SizedBox(height: 20),
+                  Text(
+                    current["en"]!,
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF2D3436)),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    current["pt"]!,
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
-          )
-        ],
+            const SizedBox(height: 40),
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: nextPhrase,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6C5CE7),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                child: const Text("Próxima Frase →", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text("${currentIndex + 1} / ${phrases.length}", style: TextStyle(color: Colors.grey[500])),
+          ],
+        ),
       ),
     );
   }
+}
