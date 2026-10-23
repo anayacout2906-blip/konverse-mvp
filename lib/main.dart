@@ -1,101 +1,97 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(KonverseApp());
 
 class KonverseApp extends StatelessWidget {
   @override
-    Widget build(BuildContext context) {
-        return MaterialApp(
-              debugShowCheckedModeBanner: false,
-                    title: 'Konverse MVP',
-                          theme: ThemeData(primarySwatch: Colors.green),
-                                home: LoginScreen(),
-                                    );
-                                      }
-                                      }
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Konverse',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+        useMaterial3: true,
+      ),
+      home: KonverseHome(),
+    );
+  }
+}
 
-                                      class LoginScreen extends StatefulWidget {
-                                        @override
-                                          _LoginScreenState createState() => _LoginScreenState();
-                                          }
+class KonverseHome extends StatefulWidget {
+  @override
+  State<KonverseHome> createState() => _KonverseHomeState();
+}
 
-                                          class _LoginScreenState extends State<LoginScreen> {
-                                            final emailCtrl = TextEditingController(text: "demo@konverse.com");
-                                              final passCtrl = TextEditingController(text: "123456");
-                                                
-                                                  login() async {
-                                                      final prefs = await SharedPreferences.getInstance();
-                                                          await prefs.setBool('logged', true);
-                                                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
-                                                                }
-                                                                  
-                                                                    @override
-                                                                      Widget build(BuildContext context) {
-                                                                          return Scaffold(
-                                                                                body: Padding(
-                                                                                        padding: EdgeInsets.all(24),
-                                                                                                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                                                                                                          Icon(Icons.chat, size: 80, color: Colors.green),
-                                                                                                                    SizedBox(height: 16),
-                                                                                                                              Text("KONVERSE CRM", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                                                                                                                                        SizedBox(height: 32),
-                                                                                                                                                  TextField(controller: emailCtrl, decoration: InputDecoration(labelText: "Email", border: OutlineInputBorder())),
-                                                                                                                                                            SizedBox(height: 16),
-                                                                                                                                                                      TextField(controller: passCtrl, obscureText: true, decoration: InputDecoration(labelText: "Senha", border: OutlineInputBorder())),
-                                                                                                                                                                                SizedBox(height: 24),
-                                                                                                                                                                                          ElevatedButton(onPressed: login, child: Text("ENTRAR"), style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 50))),
-                                                                                                                                                                                                  ]),
-                                                                                                                                                                                                        ),
-                                                                                                                                                                                                            );
-                                                                                                                                                                                                              }
-                                                                                                                                                                                                              }
+class _KonverseHomeState extends State<KonverseHome> {
+  final List<Map<String,String>> messages = [];
+  final controller = TextEditingController();
 
-                                                                                                                                                                                                              class HomeScreen extends StatefulWidget {
-                                                                                                                                                                                                                @override
-                                                                                                                                                                                                                  _HomeScreenState createState() => _HomeScreenState();
-                                                                                                                                                                                                                  }
+  void sendMessage() {
+    if(controller.text.trim().isEmpty) return;
+    setState(() {
+      messages.add({"text": controller.text, "user": "Você"});
+      // Simula resposta
+      messages.add({"text": "Konverse responde: ${controller.text} 😊", "user": "Bot"});
+    });
+    controller.clear();
+  }
 
-                                                                                                                                                                                                                  class _HomeScreenState extends State<HomeScreen> {
-                                                                                                                                                                                                                    int index = 0;
-                                                                                                                                                                                                                      final screens = [ChatsScreen(), ContactsScreen(), KanbanScreen(), TasksScreen()];
-                                                                                                                                                                                                                        
-                                                                                                                                                                                                                          @override
-                                                                                                                                                                                                                            Widget build(BuildContext context) {
-                                                                                                                                                                                                                                return Scaffold(
-                                                                                                                                                                                                                                      body: screens[index],
-                                                                                                                                                                                                                                            bottomNavigationBar: BottomNavigationBar(
-                                                                                                                                                                                                                                                    currentIndex: index,
-                                                                                                                                                                                                                                                            onTap: (i) => setState(() => index = i),
-                                                                                                                                                                                                                                                                    type: BottomNavigationBarType.fixed,
-                                                                                                                                                                                                                                                                            selectedItemColor: Colors.green,
-                                                                                                                                                                                                                                                                                    items: [
-                                                                                                                                                                                                                                                                                              BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Chats"),
-                                                                                                                                                                                                                                                                                                        BottomNavigationBarItem(icon: Icon(Icons.contacts), label: "Contatos"),
-                                                                                                                                                                                                                                                                                                                  BottomNavigationBarItem(icon: Icon(Icons.view_kanban), label: "Kanban"),
-                                                                                                                                                                                                                                                                                                                            BottomNavigationBarItem(icon: Icon(Icons.task), label: "Tarefas"),
-                                                                                                                                                                                                                                                                                                                                    ],
-                                                                                                                                                                                                                                                                                                                                          ),
-                                                                                                                                                                                                                                                                                                                                              );
-                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                }
-
-                                                                                                                                                                                                                                                                                                                                                class ChatsScreen extends StatelessWidget {
-                                                                                                                                                                                                                                                                                                                                                  final chats = ["Cliente +91 99999", "Loja Mumbai", "Suporte Vendas", "Lead Instagram"];
-                                                                                                                                                                                                                                                                                                                                                    @override
-                                                                                                                                                                                                                                                                                                                                                      Widget build(BuildContext context) {
-                                                                                                                                                                                                                                                                                                                                                          return Scaffold(appBar: AppBar(title: Text("Conversas WhatsApp")), body: ListView.builder(itemCount: chats.length, itemBuilder: (_, i) => ListTile(leading: CircleAvatar(child: Text(chats[i][0])), title: Text(chats[i]), subtitle: Text("Última mensagem: Olá, preciso de ajuda..."), onTap: () { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Chat ${chats[i]} aberto"))); })));
-                                                                                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                                                                                            class ContactsScreen extends StatelessWidget {
-                                                                                                                                                                                                                                                                                                                                                              @override
-                                                                                                                                                                                                                                                                                                                                                                Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("Contatos")), body: ListView(children: [ListTile(title: Text("Rahul Sharma"), subtitle: Text("+91 98765 43210")), ListTile(title: Text("Priya Patel"), subtitle: Text("+91 91234 56789"))]));
-                                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                                class KanbanScreen extends StatelessWidget {
-                                                                                                                                                                                                                                                                                                                                                                  @override
-                                                                                                                                                                                                                                                                                                                                                                    Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("Kanban Leads")), body: Row(children: [Expanded(child: Column(children: [Chip(label: Text("Novo")), Card(child: ListTile(title: Text("Lead 1")))] )), Expanded(child: Column(children: [Chip(label: Text("Em Atendimento")), Card(child: ListTile(title: Text("Lead 2")))] )), Expanded(child: Column(children: [Chip(label: Text("Fechado")), Card(child: ListTile(title: Text("Lead 3")))] ))]));
-                                                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                                                    class TasksScreen extends StatelessWidget {
-                                                                                                                                                                                                                                                                                                                                                                      @override
-                                                                                                                                                                                                                                                                                                                                                                        Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text("Tarefas")), body: ListView(children: [CheckboxListTile(title: Text("Ligar para cliente"), value: false, onChanged: (v){}), CheckboxListTile(title: Text("Enviar proposta"), value: true, onChanged: (v){})]));
-                                                                                                                                                                                                                                                                                                                                                                        }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Konverse 💬", style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.deepPurple.shade100,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: messages.isEmpty 
+              ? Center(child: Text("Diga oi para começar! 👋", style: TextStyle(fontSize: 18)))
+              : ListView.builder(
+                itemCount: messages.length,
+                padding: EdgeInsets.all(12),
+                itemBuilder: (c,i) {
+                  final isMe = messages[i]["user"] == "Você";
+                  return Align(
+                    alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Container(
+                      margin: EdgeInsets.symmetric(vertical: 4),
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isMe ? Colors.deepPurple : Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(messages[i]["text"]!, 
+                        style: TextStyle(color: isMe ? Colors.white : Colors.black)),
+                    ),
+                  );
+                },
+              ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Expanded(child: TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                    hintText: "Digite sua mensagem...",
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12)
+                  ),
+                  onSubmitted: (_) => sendMessage(),
+                )),
+                SizedBox(width: 8),
+                CircleAvatar(
+                  backgroundColor: Colors.deepPurple,
+                  child: IconButton(icon: Icon(Icons.send, color: Colors.white), onPressed: sendMessage),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
