@@ -94,4 +94,3 @@ class _KonverseHomeState extends State<KonverseHome> {
       ),
     );
   }
-}
